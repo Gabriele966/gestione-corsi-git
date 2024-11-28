@@ -123,16 +123,18 @@ public class Main {
                 DocenteService oDocenteService = new DocenteService();
                 List<Docente> listaDocenti= oDocenteService.readDocente();
                 for(int n = 0; n < listaDocenti.size(); n++){
-                    System.out.println(listaDocenti.get(n).getid()+" "+listaDocenti.get(n).getCognome()+" "+listaDocenti.get(n).getNome());
+                    System.out.println(listaDocenti.get(n). getid()+" "+listaDocenti.get(n).getCognome()+" "+listaDocenti.get(n).getNome());
                 }
                 System.out.println("Inserisci id del docente da inserire: ");
                 int id = scanner.nextInt();
-                Docente doc = listaDocenti.get(id-1);
-                CorsoService oCrosoService = new CorsoService();
-                oCrosoService.create(nomeCorso, dataInizioCorso, durata, doc);
-
+                for(int m = 0; m < listaDocenti.size(); m++){
+                    if(listaDocenti.get(m).getid() == id){
+                        Docente doc = listaDocenti.get(m);
+                        CorsoService oCrosoService = new CorsoService();
+                        oCrosoService.create(nomeCorso, dataInizioCorso, durata, doc);
+                    }
+                }
             }
-
         }
 
         private static void delete (int i ) {
