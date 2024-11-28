@@ -2,6 +2,7 @@ package view;
 
 import model.Discente;
 import model.Docente;
+import service.CorsoService;
 import service.DiscenteService;
 import service.DocenteService;
 import java.time.*;
@@ -22,6 +23,8 @@ public class Main {
             System.out.println("Inserisci scelta entita da creare");
             System.out.println("1. Docente");
             System.out.println("2. Discente");
+            System.out.println("3. Corso");
+
             type = scanner.nextInt();
 
             System.out.println("Classe docente");
@@ -93,7 +96,7 @@ public class Main {
                 DocenteService oDocenteService = new DocenteService();
                 oDocenteService.create(nome, cognome);
 
-            }else{
+            }else if(i == 2){
                 System.out.println("inserisci il nome:");
                 String nome = scanner.next();
                 System.out.println("inserisci il cognome:");
@@ -106,6 +109,27 @@ public class Main {
                 LocalDate dataNascita = LocalDate.parse(data, formatter);
                 DiscenteService oDiscenteService = new DiscenteService();
                 oDiscenteService.create(nome, cognome, matricola, dataNascita);
+
+            }else{
+                System.out.println("inserisci il nome:");
+                String nomeCorso = scanner.next();
+                System.out.println("inserisci la Data di inizio del corso nel formato dd/MM/yyyy:");
+                String data = scanner.next();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate dataInizioCorso = LocalDate.parse(data, formatter);
+                System.out.println("Iserire la durata del corso: ");
+                String durata = scanner.next();
+                System.out.println("ecco la lista dei docenti: ");
+                DocenteService oDocenteService = new DocenteService();
+                List<Docente> listaDocenti= oDocenteService.readDocente();
+                for(int n = 0; n < listaDocenti.size(); n++){
+                    System.out.println(listaDocenti.get(n).getid()+" "+listaDocenti.get(n).getCognome()+" "+listaDocenti.get(n).getNome());
+                }
+                System.out.println("Inserisci id del docente da inserire: ");
+                int id = scanner.nextInt();
+                Docente doc = listaDocenti.get(id-1);
+                CorsoService oCrosoService = new CorsoService();
+                oCrosoService.create(nomeCorso, dataInizioCorso, durata, doc);
 
             }
 
