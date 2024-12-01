@@ -3,6 +3,8 @@ package view;
 import model.Corso;
 import model.Discente;
 import model.Docente;
+import model.ClasseCorso;
+import service.ClasseCorsoService;
 import service.CorsoService;
 import service.DiscenteService;
 import service.DocenteService;
@@ -25,10 +27,10 @@ public class Main {
             System.out.println("1. Docente");
             System.out.println("2. Discente");
             System.out.println("3. Corso");
+            System.out.println("4. Classi");
 
             type = scanner.nextInt();
 
-            System.out.println("Classe docente");
 
             System.out.println("***Menu***");
             System.out.println("1. Crea una nuova entita ");
@@ -83,7 +85,7 @@ public class Main {
                 System.out.println(listaDiscente.get(n).getId()+" "+listaDiscente.get(n).getNome() +" "+listaDiscente.get(n).getCognome() +" "+listaDiscente.get(n).getMatricola() + " "+ listaDiscente.get(n).getDataNascita());
             }
 
-        }else{
+        }else if (i == 3){
             System.out.println("ecco la lista dei corsi e i rispettivi docenti: ");
             CorsoService oCorsoService = new CorsoService();
             List<Corso> listaCorsi = oCorsoService.readCorsi();
@@ -91,12 +93,22 @@ public class Main {
                 System.out.println(listaCorsi.get(n).getIdCorso()+" "+listaCorsi.get(n).getNomeCorso()+" "+listaCorsi.get(n).getDataInizio()+" "+listaCorsi.get(n).getDurata()+ " "+listaCorsi.get(n).getDocente().getid()
                         +" "+listaCorsi.get(n).getDocente().getNome()+ " "+listaCorsi.get(n).getDocente().getCognome());
             }
+        }else{
+            System.out.println("Ecco la lista dei discenti che seguono una lezione ");
+            ClasseCorsoService oClasseCorsoService = new ClasseCorsoService();
+            List<ClasseCorso> listaClassi = oClasseCorsoService.readClasse();
+            for(int n = 0; n < listaClassi.size(); n++){
+                System.out.println(listaClassi.get(n).getDiscente().getId()+" "+listaClassi.get(n).getDiscente().getNome()
+                +" "+ listaClassi.get(n).getDiscente().getCognome()+ "  "+ listaClassi.get(n).getCorso().getNomeCorso()
+                +" " + listaClassi.get(n).getCorso().getIdCorso());
+            }
         }
     }
 
 
         private static void create (int i ) {
             Scanner scanner = new Scanner(System.in);
+            ClasseCorso clas = new ClasseCorso();
             if(i == 1){
 
                 System.out.println("inserisci il nome:");
@@ -120,7 +132,7 @@ public class Main {
                 DiscenteService oDiscenteService = new DiscenteService();
                 oDiscenteService.create(nome, cognome, matricola, dataNascita);
 
-            }else{
+            }else if(i == 3 ){
                 System.out.println("inserisci il nome:");
                 String nomeCorso = scanner.next();
                 System.out.println("inserisci la Data di inizio del corso nel formato dd/MM/yyyy:");
@@ -145,6 +157,38 @@ public class Main {
                     }
                     System.out.println();
                 }
+            }else{
+                ClasseCorsoService oClasseCorsoService = new ClasseCorsoService();
+                System.out.println("scegliere il corso: ");
+                CorsoService oCorsoService = new CorsoService();
+                List<Corso> listaCorsi = oCorsoService.readCorsi();
+                for(int n = 0; n < listaCorsi.size(); n++){
+                    System.out.println(listaCorsi.get(n).getIdCorso()+" "+listaCorsi.get(n).getNomeCorso());
+                }
+                int idc = scanner.nextInt();
+                for(int m = 0; m < listaCorsi.size(); m++){
+                    if(listaCorsi.get(m).getIdCorso() == idc){
+                        clas.setCorso(listaCorsi.get(m));
+                    }
+                }
+                System.out.println("Segli il discente che segue il corso: ");
+                DiscenteService oDiscenteService = new DiscenteService();
+                List<Discente> listaDiscenti= oDiscenteService.readDiscente();
+                for(int n = 0; n < listaDiscenti.size(); n++){
+                    System.out.println(listaDiscenti.get(n).getId()+" "+listaDiscenti.get(n).getNome()+" "+listaDiscenti.get(n).getCognome());
+                }
+                int idd = scanner.nextInt();
+                for(int m = 0; m < listaDiscenti.size(); m++){
+                    if(listaDiscenti.get(m).getId() == idd){
+                        clas.setDiscente(listaDiscenti.get(m));
+                    }
+                }
+                String nome_discente = clas.getDiscente().getNome();
+                String cognome_discente = clas.getDiscente().getCognome();
+                String nome_corso = clas.getCorso().getNomeCorso();
+                int id_corso = clas.getCorso().getIdCorso();
+                int id_discente = clas.getDiscente().getId();
+                oClasseCorsoService.createClasse(nome_discente, cognome_discente, nome_corso, id_corso, id_discente);
             }
         }
 
@@ -162,12 +206,18 @@ public class Main {
                 int id = scanner.nextInt();
                 DiscenteService oDiscenteService = new DiscenteService();
                 oDiscenteService.delete(id);
-            }else{
+            }else if(i == 3){
                 System.out.println("Inserisci id corso da eliminare:");
                 Scanner scanner = new Scanner(System.in);
                 int id = scanner.nextInt();
                 CorsoService oCorsoService = new CorsoService();
                 oCorsoService.delete(id);
+            }else{
+                System.out.println("Inserisci id della classe da eliminare: ");
+                Scanner scanner = new Scanner(System.in);
+                int id = scanner.nextInt();
+                ClasseCorsoService oClasseCorsoService = new ClasseCorsoService();
+                oClasseCorsoService.deleteClasse(id);
             }
 
 
@@ -202,7 +252,7 @@ public class Main {
                 DiscenteService oDiscenteService = new DiscenteService();
                 oDiscenteService.update(id, nome, cognome, matricola, dataNascita);
 
-            }else{
+            }else if(i == 3){
                 System.out.println("Inserisci id corso da modificare:");
                 int id_corso = scanner.nextInt();
                 System.out.println("inserisci il nuovo nome del corso:");
@@ -224,6 +274,9 @@ public class Main {
                         oCorsoService.update(id_corso,nomeCorso, dataInizioCorso, durata, doc);
                     }
                 }
+            }else{
+                ClasseCorsoService oClasseCorsoService = new ClasseCorsoService();
+
 
             }
 

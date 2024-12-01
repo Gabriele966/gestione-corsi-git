@@ -48,7 +48,7 @@ public class DocenteRepository {
             Connection c = DbConnection.openConnection();
             System.out.println("Connessione riuscita!");
             Statement stmt = c.createStatement();
-            stmt.execute("DELETE FROM DocenteTest WHERE id = '" + oDocente.getid() + "'");
+            stmt.execute("DELETE FROM DocenteTest WHERE id = '" + oDocente.getid() + "'8");
             System.out.println("model.dao.Docente eliminato");
         } catch (ClassNotFoundException | SQLException e) {
             System.err.println(e.getMessage());
